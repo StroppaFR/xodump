@@ -79,6 +79,7 @@ static void dump_with_libc(pid_t pid, void* program_base, int* status) {
     }
     if (child_libc_base != 0) {
         fprintf(stderr, "found libc base of traced process: 0x%lx\n", child_libc_base);
+        fprintf(stderr, "starting the dump now\n");
         ptrace(PTRACE_GETREGS, pid, NULL, &regs);
         #if __WORDSIZE == 64
         /* set registers of child for write(1, prog, large) */
