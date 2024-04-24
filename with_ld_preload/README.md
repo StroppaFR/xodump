@@ -48,3 +48,5 @@ Good password!
 This was tested on a regular Debian distro with libc 2.36 and ASLR enabled. There are some cases where this tool will not work.
 
 Notably, if the target executable is linked statically with libc or not linked with libc at all, the `LD_PRELOAD` trick will have no effect on `__libc_start_main` and this method will not work at all (the target executable will run normally instead).
+
+Also note that if the target executable is not compiled with [Full RELRO](https://www.redhat.com/fr/blog/hardening-elf-binaries-using-relocation-read-only-relro), the dumped ELF file will probably crash if you try to run it.
