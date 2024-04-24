@@ -1,4 +1,6 @@
-xodump
-crackme
+*/xodump
+*/crackme
 *.o
+*.so
+*.swp
 out
