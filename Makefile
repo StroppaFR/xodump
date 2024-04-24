@@ -1,5 +1,5 @@
 CC=gcc 
-CFLAGS=-Wall -Wextra -Wno-unused-parameter
+CFLAGS=-Wall -Wextra -Wno-unused-parameter -Wl,--no-as-needed -ldl
 
 xodump: xodump.c
 	$(CC) $(CFLAGS) xodump.c -o xodump

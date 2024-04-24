@@ -64,7 +64,7 @@ Good password!
 
 ## Limitations
 
-This is mainly a PoC, it was tested on a regular Debian distro with libc 2.36 and ASLR enabled and works. There are many cases where this tool will simply not work:
+This is mainly a PoC, it was tested on a regular Debian distro with libc 2.36 and ASLR enabled. There are many cases where this tool will simply not work:
 
 - if the target binary is linked statically with libc, the `write` function won't be able to be located, and it might not even even be present in the executable at all anyway,
 - if the target binary is loaded near shared libraries, which might be the case if it's compiled itself as a shared library (?),

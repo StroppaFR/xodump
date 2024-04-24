@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <dlfcn.h>
 #include <link.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +10,7 @@
 #include <sys/stat.h>
 #include <sys/user.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #define PAGE_MASK       (~(PAGE_SIZE-1))
 #define DEFAULT_PROGRAM_OFFSET -0x1000 // There is usually a 0x1000 sized section before .text
