@@ -20,8 +20,13 @@ Enter password: idontknow
 Wrong password!
 
 $ ./xodump crackme > out
-found start of ELF file mapped at 0x555555554000
-stopped dumping at 0x555555559000
+will try to dump mapped executable /path/to/crackme
+dumping memory mapping from 0x555555554000 to 0x555555555000
+dumping memory mapping from 0x555555555000 to 0x555555556000
+dumping memory mapping from 0x555555556000 to 0x555555557000
+dumping memory mapping from 0x555555557000 to 0x555555558000
+dumping memory mapping from 0x555555558000 to 0x555555559000
+successfuly dumped 0x5000 bytes from mapped executable /path/to/crackme
 child process exited correctly after dump
 
 $ file out
@@ -40,7 +45,6 @@ Good password!
 
 ## Limitations
 
-This was tested on a regular Debian distro with libc 2.36 and ASLR enabled. There are some cases where this tool will not work:
+This was tested on a regular Debian distro with libc 2.36 and ASLR enabled. There are some cases where this tool will not work.
 
-- if the target executable is linked statically with libc, the `LD_PRELOAD` trick will have no effect on `__libc_start_main` and this method will not work,
-- probably some other reasons and securities might break this.
+Notably, if the target executable is linked statically with libc or not linked with libc at all, the `LD_PRELOAD` trick will have no effect on `__libc_start_main` and this method will not work at all (the target executable will run normally instead).

@@ -7,6 +7,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#define EXIT_DUMP_OK    42
+
 int main(int argc, char* argv[]) {
     char buf[1024];
     char* filename;
@@ -50,7 +52,7 @@ int main(int argc, char* argv[]) {
             perror("waitpid");
             exit(EXIT_FAILURE);
         }
-        if (WEXITSTATUS(status) == 42) {
+        if (WEXITSTATUS(status) == EXIT_DUMP_OK) {
             fprintf(stderr, "child process exited correctly after dump\n");
         } else {
             fprintf(stderr, "something went wrong while trying to dump child process\n");
