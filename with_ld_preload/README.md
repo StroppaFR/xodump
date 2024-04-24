@@ -1,12 +1,12 @@
 # xodump with_ld_preload
 
-This version uses `LD_PRELOAD` to preload a shared library that replaces `__libc_start_min` with a function that dumps the executable virtual memory. It uses `PR_SET_NO_NEW_PRIVS` before running the executable to disable the setuid bit if present.
+This version uses `LD_PRELOAD` to preload a shared library that replaces `__libc_start_main` with a function that dumps the executable virtual memory.
 
 ## How to use
 
 Compile `xodump.c` and `xodump_preload_lib.c` using `make all`. It doesn't really matter which libc is linked to `xodump` for this method, it can also be statically linked.
 
-If you want to dump a 32-bit executable, `xodump_preload_lib` must be compiled with the `-m32` flag.
+If you want to dump a 32-bit executable, `xodump_preload_lib.c` must be compiled with the `-m32` flag.
 
 Here is an example usage, where `xodump` is used to dump and find out the secret password of the `crackme` executable which has no read permissions.
 

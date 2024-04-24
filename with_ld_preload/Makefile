@@ -7,7 +7,7 @@ xodump: xodump.c xodump_preload_lib.c
 	$(CC) $(CFLAGS) $(LIB_CFLAGS) xodump_preload_lib.c -o xodump_preload_lib.so
 crackme: ../example/crackme.c
 	# If compiled with FULL RELRO, the dumped executable usually won't segfault when ran
-	$(CC) $(CFLAGS) -Wl,-z,relro,-z,now $< -o $@ -static
+	$(CC) $(CFLAGS) -Wl,-z,relro,-z,now $< -o $@
 	#$(CC) $(CFLAGS) -Wl,-z,norelro $< -o $@
 	chmod 111 $@
 

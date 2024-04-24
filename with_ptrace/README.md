@@ -1,6 +1,6 @@
 # xodump with_ptrace
 
-This version uses `ptrace` calls like `PTRACE_GETREGS` and `PTRACE_SETREGS` (and `PTRACE_POKETEXT` on the stack for 32-bit executables).
+This version uses `ptrace` calls such as `PTRACE_GETREGS` and `PTRACE_SETREGS` (and `PTRACE_POKETEXT` on the stack for 32-bit executables).
 
 First the parent process reads the program counter register until it detects an address of the mapped executable. Then it steps until `__libc_start_main` to find the address of the mapped libc and modifies the registers of the child process so that it calls `__write(1, program_base, large_size)`.
 

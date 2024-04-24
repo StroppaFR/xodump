@@ -6,7 +6,7 @@ This tool is inspired by [xocopy](http://reverse.lostrealm.com/tools/xocopy.html
 
 `xodump` will try to make a non-readable target executable call `write(1, program_address, size)` so that it dumps its own virtual memory to standard output. It also works on executables with the setuid bit set.
 
-This can be used to recover the compiled code and data for static analysis reverse engineering.
+This can be used to recover the compiled code and data of the executable for reverse engineering purposes.
 
 ## Motivation
 
@@ -27,7 +27,7 @@ There are two versions of this tool. Both versions do not use `PTRACE_PEEKTEXT`.
 - The version in [with_ld_preload](./with_ld_preload/) uses `LD_PRELOAD` to preload a shared library that replaces `__libc_start_main` with a function that dumps the executable virtual memory.
 - The version in [with_ptrace](./with_ptrace/) uses `ptrace` calls like `PTRACE_GETREGS` and `PTRACE_SETREGS` (and `PTRACE_POKETEXT` on the stack for 32-bit executables) which are allowed even without read permissions.
 
-Both version uses `PR_SET_NO_NEW_PRIVS` before running the executable to disable the setuid bit if present.
+Both versions use `PR_SET_NO_NEW_PRIVS` before running the executable to disable the setuid bit if present.
 
 You should probably try the [with_ld_preload](./with_ld_preload/README.md) version first. If it doesn't work, you can try [with_ptrace](./with_ptrace/README.md) instead.
 
