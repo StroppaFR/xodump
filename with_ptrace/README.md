@@ -23,12 +23,11 @@ Wrong password!
 
 $ ./xodump crackme > out
 will try to dump /path/to/crackme from parent using ptrace
-successfully allocated memory area in child process at 0x7ffff7fe9000
+successfully allocated memory area in child process at 0x7ffff7feb000
 dumping memory mapping from 0x400000 to 0x401000
-dumping memory mapping from 0x401000 to 0x495000
-dumping memory mapping from 0x495000 to 0x4bc000
-warning: unmapped region from 0x4bc000 to 0x4bd000
-dumping memory mapping from 0x4bd000 to 0x4c3000
+dumping memory mapping from 0x401000 to 0x474000
+dumping memory mapping from 0x474000 to 0x49b000
+dumping memory mapping from 0x49b000 to 0x4a2000
 successfully dumped 0xc2000 bytes from mapped executable /path/to/crackme
 
 $ file out 
@@ -47,4 +46,4 @@ Good password!
 
 This was tested on a regular Debian distro with libc 2.36 and ASLR enabled.
 
-In theory, it should be able to dump any executable as long as it uses a `syscall` (or `int 0x80`) instruction. In practice, this is a PoC, it is not portable at all and it could break at any time of any number of reasons.
+In theory, it should be able to dump any executable as long as it uses a `syscall` (or `int 0x80`) instruction. In practice, this is a PoC, it is not portable at all and it could break at any time for any number of reasons.

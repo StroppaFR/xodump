@@ -94,7 +94,7 @@ int __libc_start_main(int (*main)(int, char **, char **),
     fprintf(stderr, "dumping using /proc/self/maps failed\n");
     /* if that fails, try to dump using the known main address */
     dump_from_main((void*) main);
-    /* this code is reached only if both method fail */
+    /* this code is reached only if both methods fail */
     exit(EXIT_FAILURE);
 }
 
