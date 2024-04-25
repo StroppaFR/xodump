@@ -2,9 +2,11 @@
 
 Make an executable ELF program with no read permissions dump itself.
 
-`xodump` will try to make a non-readable target executable call `write(1, program_address, size)` so that it dumps its own virtual memory to standard output. It also works on executables with the setuid bit set.
+`xodump` will try to make a non-readable target executable dump its own virtual memory mapping to standard output. It also works on executables with the setuid bit set.
 
 This can be used to recover the compiled code and data of the executable for reverse engineering purposes.
+
+**Disclaimer**: this tool will run the target executable, only use it if you are sure the target is not harmful.
 
 ## Motivation
 
@@ -25,11 +27,9 @@ In 2002, he released the [xocopy](http://reverse.lostrealm.com/tools/xocopy.html
 
 There are two versions of this tool. Both versions do not use `PTRACE_PEEKTEXT`.
 
-- The version in [with_ld_preload](./with_ld_preload/) uses `LD_PRELOAD` to preload a shared library that replaces `__libc_start_main` with a function that dumps the executable virtual memory. It should be pretty reliable as long as the executable is linked with libc dynamically.
-- The version in [with_ptrace](./with_ptrace/) uses `ptrace` calls like `PTRACE_GETREGS` and `PTRACE_SETREGS` (and `PTRACE_POKETEXT` on the stack for 32-bit executables) which are allowed even without read permissions. It is a work in progress, you probably should not use it (yet).
+- The version in [with_ld_preload](./with_ld_preload/) uses `LD_PRELOAD` to preload a shared library that replaces `__libc_start_main` with a function that dumps the executable virtual memory. It should be pretty reliable as long as the executable is dynamically linked to libc.
+- The version in [with_ptrace](./with_ptrace/) uses `ptrace` calls such as `PTRACE_GETREGS`, `PTRACE_SETREGS` and `PTRACE_SYSCALL` which are permitted even without read permissions. It is unstable but can be used to dump both statically and dynamically linked executables.
 
 Both versions use `PR_SET_NO_NEW_PRIVS` before running the executable to disable the setuid bit if present.
 
-You should probably try the [with_ld_preload](./with_ld_preload/README.md) version first. If that doesn't work, you can try [with_ptrace](./with_ptrace/README.md) instead.
-
-TODO: merge both methods into a unique tool.
+You should probably try the [with_ld_preload](./with_ld_preload/README.md) version first which should be more stable. If that doesn't work, you can try [with_ptrace](./with_ptrace/README.md) instead.

@@ -5,8 +5,7 @@ xodump: xodump.c
 	$(CC) $(CFLAGS) xodump.c -o xodump
 crackme: ../example/crackme.c
 	# If compiled with FULL RELRO, the dumped executable usually won't segfault when ran
-	$(CC) $(CFLAGS) -Wl,-z,relro,-z,now $< -o $@
-	#$(CC) $(CFLAGS) -Wl,-z,norelro $< -o $@
+	$(CC) $(CFLAGS) -Wl,-z,relro,-z,now $< -o $@ -static
 	chmod 111 $@
 
 all: xodump crackme

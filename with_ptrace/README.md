@@ -1,18 +1,16 @@
 # xodump with_ptrace
 
-This version uses `ptrace` calls such as `PTRACE_GETREGS` and `PTRACE_SETREGS` (and `PTRACE_POKETEXT` on the stack for 32-bit executables).
+This version uses `ptrace` calls such as `PTRACE_GETREGS`, `PTRACE_SETREGS` and `PTRACE_SYSCALL` which are permitted even without read permissions.
 
-First the parent process reads the program counter register until it detects an address of the mapped executable. Then it steps until `__libc_start_main` to find the address of the mapped libc and modifies the registers of the child process so that it calls `__write(1, program_base, large_size)`.
+The idea is to trace the executable and stop it before the first `syscall` instruction, then use that instruction repeatedly to make it execute multiple system calls. The system calls can be used to make the child process read its own mapped memory and exchange data with the parent process.
+
+Contrary to the `LD_PRELOAD` version, this method can be used to dump statically linked executables. Only AMD64 and i386 architectures are supported.
 
 ## How to use
 
-`xodump.c` must be compiled with gcc and linked dynamically to the same libc used by the target executable you want to dump. This is important because it will calculate libc offsets to important functions by inspecting its own loaded libraries. Usually, simply compiling with `gcc xodump.c -o xodump` on the same system as the executable to dump should be good enough.
+Compile `xodump.c` using `make xodump`. If you want to dump a 32-bit executable, `xodump.c` must be compiled with the `-m32` flag.
 
-You can also use `strace ./target 2>&1 | grep libc` to find out which libc is loaded by the target executable.
-
-If you want to dump a 32-bit executable, `xodump` must be compiled with the `-m32` flag.
-
-Here is an example usage, where `xodump` is used to dump and find out the secret password of the `crackme` executable which has no read permissions.
+Here is an example usage, where `xodump` is used to dump and find out the secret password of the `crackme` executable which has no read permissions and is statically linked.
 
 ```console
 $ make clean && make all
@@ -23,34 +21,30 @@ $ ./crackme
 Enter password: idontknow
 Wrong password!
 
-$ ./xodump crackme -0x1000 > out
-tracing process 27429. waiting for it to run outside libraries...
-found probable program address. will start the dump from address 0x555555554000 (use <offset> to tweak this)
-using 0x23f90 as the offset to __libc_start_main in libc
-using 0x10e280 as the offset to __write in libc
-waiting for traced process to reach __libc_start_main...
-found libc base of traced process: 0x7ffff7daa000
-starting the dump now
+$ ./xodump crackme > out
+will try to dump /path/to/crackme from parent using ptrace
+successfully allocated memory area in child process at 0x7ffff7fe9000
+dumping memory mapping from 0x400000 to 0x401000
+dumping memory mapping from 0x401000 to 0x495000
+dumping memory mapping from 0x495000 to 0x4bc000
+warning: unmapped region from 0x4bc000 to 0x4bd000
+dumping memory mapping from 0x4bd000 to 0x4c3000
+successfully dumped 0xc2000 bytes from mapped executable /path/to/crackme
 
-$ file out
-out: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, stripped
+$ file out 
+out: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, missing section headers
 $ strings out
 [...]
 Enter password: 
 S3cr3tP4ssw0rd
-Good password!
-Wrong password!
 [...]
-$ chmod +x ./out && ./out
+$ ./crackme
 Enter password: S3cr3tP4ssw0rd
 Good password!
 ```
 
 ## Limitations
 
-This was tested on a regular Debian distro with libc 2.36 and ASLR enabled. There are many cases where this tool will simply not work:
+This was tested on a regular Debian distro with libc 2.36 and ASLR enabled.
 
-- if the target binary is linked statically with libc, the `__write` function won't be able to be located, and it might not even even be present in the executable at all anyway,
-- if the target binary is loaded near shared libraries, which might be the case if it's compiled itself as a shared library (?),
-- on systems with larger ASLR entropy, where shared libraries are loaded at random addresses (e.g will not start with 0x7f on a 64-bit system),
-- probably many other reasons and securities might break this.
+In theory, it should be able to dump any executable as long as it uses a `syscall` (or `int 0x80`) instruction. In practice, this is a PoC, it is not portable at all and it could break at any time of any number of reasons.
